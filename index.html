@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>tacticdev • core</title>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+  <header>
+    <h1><img src="/logo.svg" alt=""> tacticdev • core</h1>
+    <div class="header-right">
+      <button id="themeToggle" title="Toggle theme" aria-pressed="false">🖤</button>
+      <button id="settingsBtn" title="Settings">Settings</button>
+      <div id="status">● connecting…</div>
+    </div>
+  </header>
+
+  <div id="app">
+    <!-- Sidebar: conversations -->
+    <aside id="sidebar">
+      <div class="side-top">
+        <button id="newChat">+ New Chat</button>
+      </div>
+      <div class="side-filter">
+        <div class="filter-title">Filter by Tag</div>
+        <div id="tagFilter" class="tag-filter"></div>
+      </div>
+      <div id="convList"></div>
+      <div class="side-bottom">
+        <button id="exportAll" title="Export all">Export</button>
+        <label class="importLabel">Import<input id="importAll" type="file" accept="application/json"/></label>
+      </div>
+    </aside>
+
+    <!-- Settings Drawer -->
+    <aside id="drawer" aria-hidden="true">
+      <div class="drawer-header">
+        <h2>Settings</h2>
+        <button id="closeDrawer" aria-label="Close">✕</button>
+      </div>
+      <div class="drawer-body">
+        <label class="field"><span>Model</span><input id="modelInput" placeholder="llama3.1:8b" /></label>
+        <label class="field"><span>Temperature</span><input id="tempInput" type="number" min="0" max="1" step="0.05" /></label>
+        <label class="field"><span>Top-p</span><input id="toppInput" type="number" min="0" max="1" step="0.05" /></label>
+        <label class="field"><span>System Preset</span>
+          <select id="presetSelect">
+            <option value="">(none)</option>
+            <option value="You are a concise, helpful AI assistant. Be direct.">Concise Assistant</option>
+            <option value="You are a creative copywriter. Keep responses punchy and on-brand for tacticdev.">Creative Copy</option>
+            <option value="You are a code helper. Explain code in short, actionable steps.">Code Helper</option>
+          </select>
+        </label>
+        <button id="saveSettings">Save</button>
+      </div>
+    </aside>
+
+    <main id="chat">
+      <div id="convHeader">
+        <div class="conv-left">
+          <span class="color-dot" id="colorDot" title="Conversation color"></span>
+          <input id="convTitle" placeholder="Untitled Chat"/>
+          <div id="tagBar">
+            <div id="tags"></div>
+            <input id="tagInput" placeholder="Add tag and press Enter"/>
+          </div>
+        </div>
+        <div class="conv-right">
+          <button id="pinToggle" title="Pin/Unpin">☆</button>
+          <label class="field small">
+            <span>Preset</span>
+            <select id="chatPreset">
+              <option value="">(none)</option>
+              <option value="You are a concise, helpful AI assistant. Be direct.">Concise Assistant</option>
+              <option value="You are a creative copywriter. Keep responses punchy and on-brand for tacticdev.">Creative Copy</option>
+              <option value="You are a code helper. Explain code in short, actionable steps.">Code Helper</option>
+            </select>
+          </label>
+          <input id="colorPicker" type="color" value="#60a5fa" title="Label color"/>
+          <div class="conv-actions">
+            <button id="renameChat" title="Rename">Rename</button>
+            <button id="deleteChat" title="Delete">Delete</button>
+            <button id="exportChat" title="Export this chat">Export</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="messages"></div>
+      <form id="composer">
+        <textarea id="input" rows="3" placeholder="Ask me anything…" required></textarea>
+        <div class="row">
+          <input id="system" placeholder="(optional) system prompt"/>
+          <div class="row-buttons">
+            <button id="send" type="submit">Send</button>
+            <button id="resetChat" type="button" title="Clear conversation">Reset</button>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <footer>
+    <nav>
+      <a href="https://tacticdev.com" target="_blank" rel="noopener">tacticdev</a>
+      <a href="https://blueprintdynamics.com" target="_blank" rel="noopener">Blueprint Dynamics</a>
+      <a href="https://tylerhill.info" target="_blank" rel="noopener">Tyler Hill</a>
+    </nav>
+    <small>© <span id="year"></span> tacticdev • All Rights Reserved</small>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
