@@ -281,9 +281,19 @@ $importAll.onchange = (e)=>{
   e.target.value = '';
 };
 
+// API Configuration
+// Set API_BASE_URL to point to your backend server
+// Examples: 'https://api.tacticdev.com', 'http://localhost:8787'
+const API_BASE_URL = window.TACTICDEV_API_URL || '';
+
 // Health indicator
 async function ping(){
-  try { const r = await fetch('/healthz'); $status.textContent = r.ok ? '● ready' : '● degraded'; $status.className = r.ok ? 'ok' : 'warn'; }
+  try { 
+    const url = API_BASE_URL ? `${API_BASE_URL}/healthz` : '/healthz';
+    const r = await fetch(url); 
+    $status.textContent = r.ok ? '● ready' : '● degraded'; 
+    $status.className = r.ok ? 'ok' : 'warn'; 
+  }
   catch { $status.textContent = '● offline'; $status.className = 'err'; }
 }
 ping(); setInterval(ping, 10000);
@@ -377,8 +387,15 @@ async function sendMsg(e){
   };
 
   try{
-    const res = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-    if (!res.ok || !res.body) { aiWrap.querySelector('.text').textContent = `Error: ${res.status}`; return; }
+    const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/chat` : '/api/chat';
+    const res = await fetch(apiUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    if (!res.ok || !res.body) { 
+      const errorMsg = (res.status === 405 || res.status === 501)
+        ? 'API not configured. Please set window.TACTICDEV_API_URL to your backend server.' 
+        : `Error: ${res.status}`;
+      aiWrap.querySelector('.text').textContent = errorMsg; 
+      return; 
+    }
     const reader = res.body.getReader(); const decoder = new TextDecoder(); let buf='', output='';
     while(true){
       const { value, done } = await reader.read(); if(done) break;
@@ -399,8 +416,11 @@ async function sendMsg(e){
     const aiMsg = { role:'assistant', content:output, time:new Date().toLocaleTimeString() };
     addMessage(conv.id, aiMsg);
     renderMessages(loadConv(conv.id).messages);
-  }catch{
-    aiWrap.querySelector('.text').textContent = 'Connection error';
+  }catch(err){
+    const msg = API_BASE_URL 
+      ? 'Connection error. Check if the API server is running.' 
+      : 'API not configured. Please set window.TACTICDEV_API_URL to your backend server.';
+    aiWrap.querySelector('.text').textContent = msg;
   }
 }
 
